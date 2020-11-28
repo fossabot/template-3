@@ -1,5 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>cc.chordflower</groupId>
   <artifactId>template-parent</artifactId>
@@ -25,8 +25,8 @@
     </license>
   </licenses>
   <scm>
-    <connection>git+https://github.com/chordflower/template.git</connection>
-    <developerConnection>git+ssh://git@github.com:chordflower/template.git</developerConnection>
+    <connection>scm:git:https://github.com/chordflower/template.git</connection>
+    <developerConnection>scm:git:ssh://git@github.com:chordflower/template.git</developerConnection>
     <url>https://github.com/chordflower/template</url>
     <tag>developer</tag>
   </scm>
@@ -71,8 +71,9 @@
     <junit-jupiter.version>5.7.0</junit-jupiter.version>
     <vaadin-bom.version>17.0.9</vaadin-bom.version>
     <deltaspike.version>1.9.4</deltaspike.version>
-    <vertx.version>4.0.0.Beta3</vertx.version>
+    <vertx.version>4.0.0.CR2</vertx.version>
     <micrometer-bom.version>1.5.5</micrometer-bom.version>
+    <dokka.version>0.10.0</dokka.version>
   </properties>
   <repositories>
     <repository>
@@ -91,6 +92,11 @@
       <id>bintray-puravida-software-repo</id>
       <name>bintray-plugins</name>
       <url>https://dl.bintray.com/puravida-software/repo</url>
+    </pluginRepository>
+    <pluginRepository>
+      <id>jcenter</id>
+      <name>JCenter</name>
+      <url>https://jcenter.bintray.com/</url>
     </pluginRepository>
   </pluginRepositories>
   <build>
@@ -155,6 +161,8 @@
           <configuration>
             <enableAssertions>true</enableAssertions>
             <reportFormat>plain</reportFormat>
+            <printSummary>true</printSummary>
+            <testSourceDirectory>${project.basedir}/src/it/kotlin</testSourceDirectory>
           </configuration>
         </plugin>
         <plugin>
@@ -230,6 +238,16 @@
               </manifest>
             </archive>
           </configuration>
+          <executions>
+            <execution>
+              <id>attach-sources-jar</id>
+              <phase>package</phase>
+              <goals>
+                <goal>jar</goal>
+                <goal>test-jar</goal>
+              </goals>
+            </execution>
+          </executions>
         </plugin>
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
@@ -284,16 +302,182 @@
           <version>3.2.4</version>
           <configuration>
             <transformers>
-              <transformer implementation="org.apache.maven.plugins.shade.resource.ApacheLicenseResourceTransformer" />
+              <transformer implementation="org.apache.maven.plugins.shade.resource.ApacheLicenseResourceTransformer"/>
               <transformer implementation="org.apache.maven.plugins.shade.resource.ApacheNoticeResourceTransformer">
                 <addHeader>false</addHeader>
               </transformer>
-              <transformer implementation="org.apache.maven.plugins.shade.resource.ComponentsXmlResourceTransformer" />
-              <transformer implementation="org.apache.maven.plugins.shade.resource.PluginXmlResourceTransformer" />
-              <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer" />
-              <transformer implementation="org.apache.maven.plugins.shade.resource.properties.OpenWebBeansPropertiesTransformer" />
+              <transformer implementation="org.apache.maven.plugins.shade.resource.ComponentsXmlResourceTransformer"/>
+              <transformer implementation="org.apache.maven.plugins.shade.resource.PluginXmlResourceTransformer"/>
+              <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
+              <transformer implementation="org.apache.maven.plugins.shade.resource.properties.OpenWebBeansPropertiesTransformer"/>
             </transformers>
             <createDependencyReducedPom>false</createDependencyReducedPom>
+          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.jetbrains.kotlin</groupId>
+          <artifactId>kotlin-maven-plugin</artifactId>
+          <version>${kotlin.version}</version>
+          <executions>
+            <execution>
+              <id>kapt</id>
+              <goals>
+                <goal>kapt</goal>
+              </goals>
+              <configuration>
+                <sourceDirs>
+                  <sourceDir>src/main/kotlin</sourceDir>
+                </sourceDirs>
+                <annotationProcessorPaths>
+                  <path>
+                    <groupId>com.google.auto.factory</groupId>
+                    <artifactId>auto-factory</artifactId>
+                    <version>1.0-beta8</version>
+                  </path>
+                  <path>
+                    <groupId>com.google.auto.service</groupId>
+                    <artifactId>auto-service</artifactId>
+                    <version>1.0-rc7</version>
+                  </path>
+                  <path>
+                    <groupId>org.hibernate.validator</groupId>
+                    <artifactId>hibernate-validator-annotation-processor</artifactId>
+                    <version>7.0.0.Alpha6</version>
+                  </path>
+                </annotationProcessorPaths>
+              </configuration>
+            </execution>
+            <execution>
+              <id>compile</id>
+              <phase>compile</phase>
+              <goals>
+                <goal>compile</goal>
+              </goals>
+              <configuration>
+                <apiVersion>1.4</apiVersion>
+                <sourceDirs>
+                  <source>src/main/kotlin</source>
+                  <source>target/generated-sources/annotations</source>
+                </sourceDirs>
+              </configuration>
+            </execution>
+            <execution>
+              <id>kapt-test</id>
+              <goals>
+                <goal>test-kapt</goal>
+              </goals>
+              <configuration>
+                <sourceDirs>
+                  <sourceDir>src/test/kotlin</sourceDir>
+                  <sourceDir>src/it/kotlin</sourceDir>
+                </sourceDirs>
+                <annotationProcessorPaths>
+                  <path>
+                    <groupId>com.google.auto.factory</groupId>
+                    <artifactId>auto-factory</artifactId>
+                    <version>1.0-beta8</version>
+                  </path>
+                  <path>
+                    <groupId>com.google.auto.service</groupId>
+                    <artifactId>auto-service</artifactId>
+                    <version>1.0-rc7</version>
+                  </path>
+                  <path>
+                    <groupId>org.hibernate.validator</groupId>
+                    <artifactId>hibernate-validator-annotation-processor</artifactId>
+                    <version>7.0.0.Alpha6</version>
+                  </path>
+                </annotationProcessorPaths>
+              </configuration>
+            </execution>
+            <execution>
+              <id>test-compile</id>
+              <phase>test-compile</phase>
+              <goals>
+                <goal>test-compile</goal>
+              </goals>
+              <configuration>
+                <apiVersion>1.4</apiVersion>
+                <sourceDirs>
+                  <sourceDir>src/test/kotlin</sourceDir>
+                </sourceDirs>
+              </configuration>
+            </execution>
+          </executions>
+          <configuration>
+            <jvmTarget>1.8</jvmTarget>
+            <apiVersion>1.4</apiVersion>
+          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-failsafe-plugin</artifactId>
+          <version>3.0.0-M5</version>
+          <executions>
+            <execution>
+              <goals>
+                <goal>integration-test</goal>
+                <goal>verify</goal>
+              </goals>
+            </execution>
+          </executions>
+          <configuration>
+            <testSourceDirectory>${project.basedir}/src/it/kotlin</testSourceDirectory>
+          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>build-helper-maven-plugin</artifactId>
+          <version>3.2.0</version>
+          <executions>
+            <execution>
+              <id>add-test-source</id>
+              <phase>generate-test-sources</phase>
+              <goals>
+                <goal>add-test-source</goal>
+              </goals>
+              <configuration>
+                <sources>
+                  <source>${project.basedir}/src/it/kotlin</source>
+                </sources>
+              </configuration>
+            </execution>
+            <execution>
+              <id>add-test-resources</id>
+              <phase>generate-test-resources</phase>
+              <goals>
+                <goal>add-test-resource</goal>
+              </goals>
+              <configuration>
+                <resources>
+                  <resource>
+                    <directory>${project.basedir}/src/it/resources</directory>
+                  </resource>
+                </resources>
+              </configuration>
+            </execution>
+          </executions>
+        </plugin>
+        <plugin>
+          <groupId>org.jetbrains.dokka</groupId>
+          <artifactId>dokka-maven-plugin</artifactId>
+          <version>${dokka.version}</version>
+          <executions>
+            <execution>
+              <phase>pre-site</phase>
+              <goals>
+                <goal>dokka</goal>
+              </goals>
+            </execution>
+          </executions>
+          <configuration>
+            <apiVersion>1.4</apiVersion>
+            <jdkVersion>8</jdkVersion>
+            <reportUndocumented>true</reportUndocumented>
+            <skipEmptyPackages>false</skipEmptyPackages>
+            <generateIndexPages>true</generateIndexPages>
+            <includeNonPublic>true</includeNonPublic>
+            <outputDir>${project.reporting.outputDirectory}</outputDir>
           </configuration>
         </plugin>
       </plugins>
@@ -435,6 +619,22 @@
           <processPluginDependenciesInPluginManagement>false</processPluginDependenciesInPluginManagement>
         </configuration>
       </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-report-plugin</artifactId>
+        <version>3.0.0-M4</version>
+        <reportSets>
+          <reportSet>
+            <reports>
+              <report>report-only</report>
+              <report>failsafe-report-only</report>
+            </reports>
+          </reportSet>
+        </reportSets>
+      </plugin>
     </plugins>
   </reporting>
+  <modules>
+    <module>template-vertx-basic</module>
+  </modules>
 </project>
