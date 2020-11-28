@@ -1,0 +1,19 @@
+= App Template
+
+This project contains a series of VertX based templates for a app server, with the given base features:
+
+*   Configuration support in json, yaml, property and toml formats;
+*   Slf4j based logging, including loggly support;
+*   An event system based on greenrobot's EventBus;
+*   Metrics based on prometheus and micrometer;
+*   Support for sessions based on redis;
+*   Support for RabbitMQ queues.
+
+Besides the basic template, with support for only RESTfull services; there are also the following templates:
+
+*   Vaadin based template, with support for relational databases;
+*   RESTfull services, with support for relational databases;
+*   Vue.JS based template, with support for relational databases;
+*   Vaadin based template, with support for nosql databases;
+*   RESTfull services, with support for nosql databases.
+*   Vue.JS based template, with support for nosql databases.
