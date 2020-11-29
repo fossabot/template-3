@@ -563,3 +563,4 @@ $RECYCLE.BIN/
 
 # End of https://www.toptal.com/developers/gitignore/api/windows,macos,linux,backup,compressedarchive,svn,bazaar,cvs,mercurial,maven,vue,yarn,node,eclipse,visualstudiocode,intellij+all,netbeans
 
+template-vertx-basic/.flattened-pom.xml
