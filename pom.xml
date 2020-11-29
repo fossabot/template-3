@@ -344,6 +344,11 @@
                     <artifactId>hibernate-validator-annotation-processor</artifactId>
                     <version>7.0.0.Alpha6</version>
                   </path>
+                  <dependency>
+                    <groupId>org.greenrobot</groupId>
+                    <artifactId>eventbus-annotation-processor</artifactId>
+                    <version>3.2.0</version>
+                  </dependency>
                 </annotationProcessorPaths>
               </configuration>
             </execution>
@@ -387,6 +392,11 @@
                     <artifactId>hibernate-validator-annotation-processor</artifactId>
                     <version>7.0.0.Alpha6</version>
                   </path>
+                  <dependency>
+                    <groupId>org.greenrobot</groupId>
+                    <artifactId>eventbus-annotation-processor</artifactId>
+                    <version>3.2.0</version>
+                  </dependency>
                 </annotationProcessorPaths>
               </configuration>
             </execution>
