@@ -1,10 +1,11 @@
 package cc.chordflower.template.basic.application.events
 
+import cc.chordflower.template.basic.application.config.Configuration
 import io.vavr.collection.Array
 import java.util.*
 
 abstract class Event<T> protected constructor(val eventType: EventType, val data: T) {
-  class ConfigurationParsingEvent() : Event<Unit>(EventType.CONFIG_PARSER, Unit)
+  class ConfigurationParsingEvent(configuration: Configuration) : Event<Configuration>(EventType.CONFIG_PARSER, configuration)
   class ParseArgumentsEvent(arg: Array<String>) : Event<Array<String>>(EventType.PARSE_ARGUMENTS, arg)
   class BeforeStartEvent : Event<Unit>(EventType.BEFORE_START, Unit)
 

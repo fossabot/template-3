@@ -22,6 +22,8 @@
     <eventbus.version>3.2.0</eventbus.version>
     <vavr.version>1.0.0-alpha-3</vavr.version>
     <logback-ext-loggly.version>0.1.5</logback-ext-loggly.version>
+    <jackson-module-blackbird.version>2.12.0-rc2</jackson-module-blackbird.version>
+    <byteunits.version>0.9.1</byteunits.version>
   </properties>
   <dependencies>
     <!-- VertX -->
@@ -209,6 +211,65 @@
       <version>${logback-ext-loggly.version}</version>
     </dependency>
 
+    <!-- Jackson -->
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-databind</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-annotations</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.dataformat</groupId>
+      <artifactId>jackson-dataformat-yaml</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.dataformat</groupId>
+      <artifactId>jackson-dataformat-xml</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.dataformat</groupId>
+      <artifactId>jackson-dataformat-properties</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.dataformat</groupId>
+      <artifactId>jackson-dataformat-csv</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.datatype</groupId>
+      <artifactId>jackson-datatype-jsr310</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.datatype</groupId>
+      <artifactId>jackson-datatype-jdk8</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.module</groupId>
+      <artifactId>jackson-module-kotlin</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.module</groupId>
+      <artifactId>jackson-module-parameter-names</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.module</groupId>
+      <artifactId>jackson-module-paranamer</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.module</groupId>
+      <artifactId>jackson-module-mrbean</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.module</groupId>
+      <artifactId>jackson-module-blackbird</artifactId>
+      <version>${jackson-module-blackbird.version}</version>
+    </dependency>
+
     <!-- Utilities -->
     <dependency>
       <groupId>org.greenrobot</groupId>
@@ -219,6 +280,11 @@
       <groupId>io.vavr</groupId>
       <artifactId>vavr</artifactId>
       <version>${vavr.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.jakewharton.byteunits</groupId>
+      <artifactId>byteunits</artifactId>
+      <version>${byteunits.version}</version>
     </dependency>
 
     <dependency>
@@ -329,4 +395,73 @@ resolve: Take the element from the resolved POM.
       </plugin>
     </plugins>
   </build>
+  <profiles>
+    <profile>
+      <id>generate-beans-from-json-schema</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.jsonschema2pojo</groupId>
+            <artifactId>jsonschema2pojo-maven-plugin</artifactId>
+            <version>1.0.2</version>
+            <executions>
+              <execution>
+                <id>generate-config-beans</id>
+                <phase>generate-sources</phase>
+                <goals>
+                  <goal>generate</goal>
+                </goals>
+                <configuration>
+                  <outputDirectory>${project.build.sourceDirectory}</outputDirectory>
+                  <outputEncoding>UTF-8</outputEncoding>
+                  <sourceDirectory>${resources.directory}/schemas/config</sourceDirectory>
+                  <targetPackage>cc.chordflower.template.basic.application.config.base</targetPackage>
+                  <classNamePrefix>Base</classNamePrefix>
+                </configuration>
+              </execution>
+              <execution>
+                <id>generate-api-beans</id>
+                <phase>generate-sources</phase>
+                <goals>
+                  <goal>generate</goal>
+                </goals>
+                <configuration>
+                  <outputDirectory>${project.build.sourceDirectory}</outputDirectory>
+                  <outputEncoding>UTF-8</outputEncoding>
+                  <sourceDirectory>${resources.directory}/schemas/api</sourceDirectory>
+                  <targetPackage>cc.chordflower.template.basic.application.api</targetPackage>
+                </configuration>
+              </execution>
+            </executions>
+            <configuration>
+              <addCompileSourceRoot>false</addCompileSourceRoot>
+              <annotationStyle>jackson2</annotationStyle>
+              <dateTimeType>java.time.LocalDateTime</dateTimeType>
+              <dateType>java.time.LocalDate</dateType>
+              <generateBuilders>false</generateBuilders>
+              <includeAdditionalProperties>false</includeAdditionalProperties>
+              <includeConstructors>false</includeConstructors>
+              <includeGetters>true</includeGetters>
+              <includeHashcodeAndEquals>false</includeHashcodeAndEquals>
+              <includeJsr303Annotations>true</includeJsr303Annotations>
+              <includeJsr305Annotations>false</includeJsr305Annotations>
+              <includeSetters>true</includeSetters>
+              <includeToString>false</includeToString>
+              <includeTypeInfo>false</includeTypeInfo>
+              <initializeCollections>true</initializeCollections>
+              <serializable>true</serializable>
+              <sourceType>jsonschema</sourceType>
+              <targetVersion>1.8</targetVersion>
+              <timeType>java.time.LocalTime</timeType>
+              <useBigDecimals>true</useBigDecimals>
+              <useBigIntegers>true</useBigIntegers>
+              <useLongIntegers>true</useLongIntegers>
+              <useOptionalForGetters>false</useOptionalForGetters>
+              <useTitleAsClassname>true</useTitleAsClassname>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 </project>

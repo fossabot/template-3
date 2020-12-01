@@ -1,5 +1,6 @@
 package cc.chordflower.template.basic
 
+import cc.chordflower.template.basic.application.config.Configuration
 import cc.chordflower.template.basic.application.events.Event
 import cc.chordflower.template.basic.application.utils.currentEnvPath
 import io.vertx.config.ConfigRetriever
@@ -59,6 +60,8 @@ object TemplateApp : Runnable {
     retriever.getConfig { json ->
       if(!json.failed()) {
         logger.info("Parsed the configuration!")
+        val configuration = Configuration(json.result())
+        eventBus.post(Event.ConfigurationParsingEvent(configuration))
       } else {
         logger.error("Configuration parsing failed!", json.cause())
       }

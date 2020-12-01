@@ -1,0 +1,347 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema",
+  "description": "Schema for the configuration file",
+  "type":"object",
+  "title": "Configuration",
+  "additionalProperties": false,
+  "properties": {
+    "$schema": {
+      "description": "the configuration schema always a reference to this document",
+      "type":"string",
+      "title": "schema"
+    },
+    "server": {
+      "title": "ServerConfiguration",
+      "description": "Server related properties",
+      "type":"object",
+      "additionalProperties": false,
+      "properties": {
+        "address": {
+          "title": "address",
+          "description": "The address the server should listen to it must be an ip address",
+          "default": "127.0.0.1",
+          "type":"string"
+        },
+        "port": {
+          "title": "port",
+          "description": "The port the server should listen to",
+          "type":"integer",
+          "minimum": 0,
+          "maximum": 65535,
+          "default": 0
+        },
+        "certificate": {
+          "title": "certificate",
+          "description": "The certificate (public key) to use by the server (activates tls)",
+          "type":"string",
+          "default": ""
+        },
+        "key": {
+          "title": "key",
+          "description": "The private key to use by the server",
+          "type":"string",
+          "default": ""
+        },
+        "session": {
+          "title": "SessionConfiguration",
+          "description": "Configuration related to the session",
+          "type":"object",
+          "additionalProperties": false,
+          "properties": {
+            "key": {
+              "title": "key",
+              "type":"string",
+              "description": "The name of the session cookie",
+              "minLength": 4,
+              "maxLength": 20,
+              "default": "KSESSION"
+            },
+            "max_age": {
+              "title": "maxAge",
+              "type":"integer",
+              "description": "The number of miliseconds that the session is active",
+              "minimum": 1,
+              "default": 18000000
+            }
+          }
+        },
+        "options": {
+          "title": "OptionsConfiguration",
+          "description": "Several server options",
+          "type":"object",
+          "additionalProperties": false,
+          "properties": {
+            "compression_level": {
+              "title": "compressionLevel",
+              "type": "integer",
+              "description": "The level of compression of responses (0 disables it)",
+              "minimum": 0,
+              "maximum": 10,
+              "default": 2
+            },
+            "idle_timeout": {
+              "title": "idleTimeout",
+              "type": "integer",
+              "description": "The number of miliseconds a idle connection should stay open",
+              "minimum": 0,
+              "default": 20000
+            },
+            "max_chunk_size": {
+              "title": "maxChunkSize",
+              "type": "integer",
+              "description": "The maximum HTTP chunk size in bytes",
+              "minimum": 1,
+              "default": 625000
+            },
+            "max_header_size": {
+              "title": "maxHeaderSize",
+              "type": "integer",
+              "description": "The maximum total Header size in bytes",
+              "minimum": 1,
+              "default": 125000
+            },
+            "max_initial_line_length": {
+              "title": "maxInitialLineLength",
+              "type": "integer",
+              "description": "The maximum size of the initial line",
+              "minimum": 1,
+              "default": 256
+            },
+            "max_body_size": {
+              "title": "maxBodySize",
+              "type": "integer",
+              "description": "The maximum size of a request body in bytes",
+              "minimum": 1,
+              "default": 3125000
+            },
+            "csrf_cookie_name": {
+              "title": "csrfCookieName",
+              "type": "string",
+              "description": "The name of the csrf cookie to send",
+              "minLength": 4,
+              "maxLength": 30,
+              "default": "XSRF-TOKEN"
+            },
+            "csrf_header_name": {
+              "title": "csrfHeaderName",
+              "type": "string",
+              "description": "The name of the csrf header to expect",
+              "minLength": 4,
+              "maxLength": 30,
+              "default": "X-XSRF-TOKEN"
+            },
+            "csrf_cookie_timeout": {
+              "title": "csrfCookieTimeout",
+              "type": "integer",
+              "description": "The timeout of the csrf cookie in miliseconds",
+              "minimum": 0,
+              "default": 120000
+            }
+          }
+        },
+        "static": {
+          "title": "StaticConfiguration",
+          "type": "object",
+          "description": "Configuration for the static files handler.",
+          "additionalProperties": false,
+          "properties": {
+            "index_page": {
+              "title": "indexPage",
+              "type": "string",
+              "description": "The index or initial page.",
+              "default": "index.html"
+            },
+            "max_cache_time": {
+              "title": "maxCacheTime",
+              "type": "integer",
+              "description": "The maximum time a static file should be allowed to stay in the browsers cache in miliseconds.",
+              "default": 432000000
+            }
+          }
+        }
+      },
+      "dependencies": {
+        "certificate": { "required": ["key"] },
+        "key": { "required": ["certificate"] }
+      }
+    },
+    "loggly": {
+      "title": "LogglyConfiguration",
+      "description": "Definitions related to the loggly log server",
+      "type":"object",
+      "additionalProperties": false,
+      "properties": {
+        "enabled": {
+          "title": "enabled",
+          "type":"boolean",
+          "description": "If the loggly logger is enabled",
+          "default":"false"
+        },
+        "token": {
+          "title": "token",
+          "type":"string",
+          "description": "The access token",
+          "default": ""
+        }
+      },
+      "dependencies": {
+        "enabled": {
+          "required": ["token"]
+        }
+      }
+    },
+    "discovery": {
+      "title": "DiscoveryConfiguration",
+      "description": "Definitions related to the registration in a consul server",
+      "type":"object",
+      "additionalProperties": false,
+      "properties": {
+        "enabled": {
+          "title": "enabled",
+          "description": "Enable the consul registration",
+          "type":"boolean",
+          "default":false
+        },
+        "host": {
+          "title": "host",
+          "description": "The location of the consul server",
+          "type":"string",
+          "default":"127.0.0.1"
+        },
+        "port": {
+          "title": "port",
+          "description": "The consul server port",
+          "type":"integer",
+          "minimum": 1,
+          "maximum": 65535,
+          "default": 8500
+        },
+        "datacenter": {
+          "title": "datacenter",
+          "description": "The datacenter to use",
+          "type":"string",
+          "default": ""
+        },
+        "acl_token": {
+          "title": "aclToken",
+          "description": "The acl token to use",
+          "type":"string",
+          "default": "anonymous"
+        }
+      }
+    },
+    "redis": {
+      "title": "RedisConfiguration",
+      "description": "Definitions related to the redis server used for cache",
+      "type":"object",
+      "additionalProperties": false,
+      "properties": {
+        "host": {
+          "title": "host",
+          "description": "The redis server location",
+          "type": "string",
+          "default": "127.0.0.1"
+        },
+        "port": {
+          "title": "port",
+          "description": "The redis server port",
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 65535,
+          "default": 6379
+        },
+        "password": {
+          "title": "password",
+          "description": "The redis server password",
+          "type": "string"
+        },
+        "database": {
+          "title": "database",
+          "description": "The database to use",
+          "type": "integer",
+          "minimum": 0,
+          "default": 0
+        }
+      }
+    },
+    "management": {
+      "title": "ManagementConfiguration",
+      "description": "Describes the management configuration used to control the server",
+      "type":"object",
+      "additionalProperties": false,
+      "properties": {
+        "address": {
+          "title": "address",
+          "description": "The address the management server should listen to it must be an ip address",
+          "default": "127.0.0.1",
+          "type":"string"
+        },
+        "port": {
+          "title": "port",
+          "description": "The port the management server should listen to",
+          "type":"integer",
+          "minimum": 0,
+          "maximum": 65535,
+          "default": 0
+        },
+        "username": {
+          "title": "username",
+          "description": "The management server username",
+          "type":"string",
+          "default":"admin"
+        },
+        "password": {
+          "title": "password",
+          "description": "The management server username password",
+          "type":"string",
+          "default":"admin123"
+        }
+      }
+    },
+    "mail": {
+      "title": "MailConfiguration",
+      "description": "Information about the smtp server to use",
+      "type":"object",
+      "additionalProperties": false,
+      "properties": {
+        "address": {
+          "title": "address",
+          "description": "The smtp server address",
+          "default": "127.0.0.1",
+          "type":"string"
+        },
+        "port": {
+          "title": "port",
+          "description": "The port the smtp server",
+          "type":"integer",
+          "minimum": 1,
+          "maximum": 65535,
+          "default": 654
+        },
+        "username": {
+          "title": "username",
+          "description": "The smtp server username",
+          "type":"string"
+        },
+        "password": {
+          "title": "password",
+          "description": "The smtp server username password",
+          "type":"string"
+        },
+        "secure": {
+          "title": "secure",
+          "description": "If a secure connection should be made",
+          "type":"boolean",
+          "default":false
+        },
+        "from": {
+          "title": "from",
+          "description": "The email address that we should sent emails from",
+          "type":"string",
+          "default":"",
+          "format": "email"
+        }
+      }
+    }
+  }
+}
