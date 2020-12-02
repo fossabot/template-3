@@ -24,6 +24,9 @@
     <logback-ext-loggly.version>0.1.5</logback-ext-loggly.version>
     <jackson-module-blackbird.version>2.12.0-rc2</jackson-module-blackbird.version>
     <byteunits.version>0.9.1</byteunits.version>
+    <kotest-runner-junit5-jvm.version>4.3.1</kotest-runner-junit5-jvm.version>
+    <expekt.version>0.5.0</expekt.version>
+    <classgraph.version>4.8.90</classgraph.version>
   </properties>
   <dependencies>
     <!-- VertX -->
@@ -286,6 +289,11 @@
       <artifactId>byteunits</artifactId>
       <version>${byteunits.version}</version>
     </dependency>
+    <dependency>
+      <groupId>io.github.classgraph</groupId>
+      <artifactId>classgraph</artifactId>
+      <version>${classgraph.version}</version>
+    </dependency>
 
     <dependency>
       <groupId>org.jetbrains.kotlin</groupId>
@@ -307,6 +315,18 @@
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-engine</artifactId>
       <version>${junit-jupiter.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>io.kotest</groupId>
+      <artifactId>kotest-runner-junit5-jvm</artifactId>
+      <version>${kotest-runner-junit5-jvm.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.winterbe</groupId>
+      <artifactId>expekt</artifactId>
+      <version>${expekt.version}</version>
       <scope>test</scope>
     </dependency>
   </dependencies>

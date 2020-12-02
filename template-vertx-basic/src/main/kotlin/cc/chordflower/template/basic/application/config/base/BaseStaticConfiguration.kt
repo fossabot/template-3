@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyDescription
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import java.io.Serializable
 import java.math.BigInteger
+import java.util.concurrent.TimeUnit
 
 /**
  * Configuration for the static files handler.
@@ -37,7 +38,7 @@ open class BaseStaticConfiguration : Serializable {
 
   internal constructor() {
     indexPage = "index.html"
-    maxCacheTime = BigInteger("432000000")
+    maxCacheTime = BigInteger.valueOf(TimeUnit.DAYS.toMillis(5))
   }
 
   constructor(indexPage: String, maxCacheTime: BigInteger) {

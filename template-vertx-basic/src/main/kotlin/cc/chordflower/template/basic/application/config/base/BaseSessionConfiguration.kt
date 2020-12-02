@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyDescription
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
 import java.io.Serializable
 import java.math.BigInteger
+import java.util.concurrent.TimeUnit
 import javax.validation.constraints.DecimalMin
 import javax.validation.constraints.Size
 
@@ -41,7 +42,7 @@ open class BaseSessionConfiguration : Serializable {
 
   internal constructor() {
     key = "KSESSION"
-    maxAge = BigInteger("18000000")
+    maxAge = BigInteger.valueOf(TimeUnit.HOURS.toMillis(2))
   }
 
   constructor(

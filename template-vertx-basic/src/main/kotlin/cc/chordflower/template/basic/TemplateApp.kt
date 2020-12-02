@@ -62,6 +62,9 @@ object TemplateApp : Runnable {
         logger.info("Parsed the configuration!")
         val configuration = Configuration(json.result())
         eventBus.post(Event.ConfigurationParsingEvent(configuration))
+
+
+
       } else {
         logger.error("Configuration parsing failed!", json.cause())
       }

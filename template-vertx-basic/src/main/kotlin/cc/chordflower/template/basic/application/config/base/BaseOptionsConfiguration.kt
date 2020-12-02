@@ -4,8 +4,10 @@ import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonPropertyDescription
 import com.fasterxml.jackson.annotation.JsonPropertyOrder
+import com.jakewharton.byteunits.BinaryByteUnit
 import java.io.Serializable
 import java.math.BigInteger
+import java.util.concurrent.TimeUnit
 import javax.validation.constraints.DecimalMax
 import javax.validation.constraints.DecimalMin
 import javax.validation.constraints.Size
@@ -120,14 +122,14 @@ open class BaseOptionsConfiguration : Serializable {
 
   internal constructor() {
     compressionLevel = BigInteger("2")
-    idleTimeout = BigInteger("20000")
-    maxChunkSize = BigInteger("625000")
-    maxHeaderSize = BigInteger("125000")
-    maxInitialLineLength = BigInteger("256")
-    maxBodySize = BigInteger("3125000")
+    idleTimeout = BigInteger.valueOf(TimeUnit.SECONDS.toMillis(20))
+    maxChunkSize = BigInteger.valueOf(BinaryByteUnit.MEBIBYTES.toBytes(2))
+    maxHeaderSize = BigInteger.valueOf(BinaryByteUnit.KIBIBYTES.toBytes(512))
+    maxInitialLineLength = BigInteger("1024") //bytes
+    maxBodySize = BigInteger.valueOf(BinaryByteUnit.MEBIBYTES.toBytes(25))
     csrfCookieName = "XSRF-TOKEN"
     csrfHeaderName = "X-XSRF-TOKEN"
-    csrfCookieTimeout = BigInteger("120000")
+    csrfCookieTimeout = BigInteger.valueOf(TimeUnit.MINUTES.toMillis(2))
   }
 
   constructor(

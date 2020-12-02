@@ -3,6 +3,7 @@ package cc.chordflower.template.basic.application.config
 import cc.chordflower.template.basic.application.config.base.BaseServerConfiguration
 import cc.chordflower.template.basic.application.utils.ValidatedObject
 import io.vertx.core.json.JsonObject
+import java.math.BigInteger
 import java.util.*
 import javax.validation.Validator
 
