@@ -7,6 +7,7 @@ import io.vertx.config.ConfigRetriever
 import io.vertx.config.ConfigRetrieverOptions
 import io.vertx.config.ConfigStoreOptions
 import io.vertx.core.Vertx
+import io.vertx.core.VertxOptions
 import io.vertx.core.json.JsonObject
 import org.apache.deltaspike.cdise.api.CdiContainerLoader
 import org.apache.deltaspike.core.api.provider.BeanProvider
@@ -40,7 +41,11 @@ object TemplateApp : Runnable {
 
     eventBus.post(Event.ParseArgumentsEvent(io.vavr.collection.Array.of(*args)))
 
-    val vertx = Vertx.vertx()
+    val vertxOptions = VertxOptions()
+    vertxOptions.preferNativeTransport = true
+
+    val vertx = Vertx.vertx(vertxOptions)
+
     val options = ConfigRetrieverOptions().setIncludeDefaultStores(false)
     options.addStore(jsonFileConfigStore.setConfig(JsonObject().put("path", "./config.json")))
       .addStore(yamlFileConfigStore.setConfig(JsonObject().put("path", "./config.yaml")))
@@ -61,9 +66,12 @@ object TemplateApp : Runnable {
       if(!json.failed()) {
         logger.info("Parsed the configuration!")
         val configuration = Configuration(json.result())
-        eventBus.post(Event.ConfigurationParsingEvent(configuration))
+        eventBus.post(Event.ConfigurationParsingEvent(configuration, vertx))
 
-
+        if( logger is ch.qos.logback.classic.Logger && configuration.loggly.enabled ) {
+          logger.addAppender(BeanProvider.getContextualReference(TemplateModules::class.java).createLogglyAppender(configuration.loggly))
+        }
+        eventBus.post(Event.LoggerConfiguredEvent(vertx))
 
       } else {
         logger.error("Configuration parsing failed!", json.cause())
