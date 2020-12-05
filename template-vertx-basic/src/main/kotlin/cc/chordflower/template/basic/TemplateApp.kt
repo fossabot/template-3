@@ -67,6 +67,7 @@ object TemplateApp : Runnable {
         logger.info("Parsed the configuration!")
         val configuration = Configuration(json.result())
         eventBus.post(Event.ConfigurationParsingEvent(configuration, vertx))
+        vertx.orCreateContext.put("configuration", configuration)
 
         if( logger is ch.qos.logback.classic.Logger && configuration.loggly.enabled ) {
           logger.addAppender(BeanProvider.getContextualReference(TemplateModules::class.java).createLogglyAppender(configuration.loggly))

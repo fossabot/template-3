@@ -1,6 +1,7 @@
 package cc.chordflower.template.basic
 
 import cc.chordflower.template.basic.application.config.base.BaseLogglyConfiguration
+import cc.chordflower.template.basic.application.events.AppEventIndex
 import ch.qos.logback.classic.spi.ILoggingEvent
 import ch.qos.logback.ext.loggly.LogglyAppender
 import com.fasterxml.jackson.databind.DeserializationFeature
@@ -51,6 +52,7 @@ class TemplateModules {
     return EventBus.builder()
       .logNoSubscriberMessages(false)
       .sendNoSubscriberEvent(false)
+      .addIndex(AppEventIndex())
       .build()
   }
 

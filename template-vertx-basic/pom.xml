@@ -28,6 +28,7 @@
     <expekt.version>0.5.0</expekt.version>
     <classgraph.version>4.8.90</classgraph.version>
     <logstash-logback-encoder.version>6.5</logstash-logback-encoder.version>
+    <maven.test.skip>false</maven.test.skip>
   </properties>
   <dependencies>
     <!-- VertX -->
@@ -452,6 +453,37 @@ resolve: Take the element from the resolved POM.
       <plugin>
         <groupId>org.jetbrains.kotlin</groupId>
         <artifactId>kotlin-maven-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>default-compile</id>
+            <phase>none</phase>
+          </execution>
+          <execution>
+            <id>default-testCompile</id>
+            <phase>none</phase>
+          </execution>
+          <execution>
+            <id>java-compile</id>
+            <phase>compile</phase>
+            <goals>
+              <goal>compile</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>java-test-compile</id>
+            <phase>test-compile</phase>
+            <goals>
+              <goal>testCompile</goal>
+            </goals>
+            <configuration>
+              <skip>${maven.test.skip}</skip>
+            </configuration>
+          </execution>
+        </executions>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>

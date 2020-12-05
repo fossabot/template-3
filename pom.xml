@@ -350,6 +350,9 @@
                     <version>3.2.0</version>
                   </dependency>
                 </annotationProcessorPaths>
+                <annotationProcessorArgs>
+                  <arg>eventBusIndex=cc.chordflower.template.basic.application.events.AppEventIndex</arg>
+                </annotationProcessorArgs>
               </configuration>
             </execution>
             <execution>
