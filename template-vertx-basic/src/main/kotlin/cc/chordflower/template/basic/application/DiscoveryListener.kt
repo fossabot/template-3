@@ -2,6 +2,7 @@ package cc.chordflower.template.basic.application
 
 import cc.chordflower.template.basic.application.config.Configuration
 import cc.chordflower.template.basic.application.events.Event
+import cc.chordflower.template.basic.application.utils.ContextObjects
 import io.vavr.control.Option
 import io.vertx.ext.consul.ConsulClient
 import io.vertx.ext.consul.ConsulClientOptions
@@ -33,7 +34,7 @@ class DiscoveryListener @Inject constructor(private val eventBus: EventBus) {
   @Subscribe(threadMode = ThreadMode.POSTING)
   fun registerServer( event : Event.LoggerConfiguredEvent ) {
     if( event.vertx != null ) {
-      val conf = Option.of(event.vertx.orCreateContext.get<Configuration>("configuration")).getOrElseThrow(::IllegalArgumentException)
+      val conf = Option.of(event.vertx.orCreateContext.get<Configuration>(ContextObjects.CONFIGURATION.key)).getOrElseThrow(::IllegalArgumentException)
       if(conf.discovery.enabled) {
         logger.info("Registering server in consul")
         val consulClientOptions = ConsulClientOptions()
@@ -47,8 +48,8 @@ class DiscoveryListener @Inject constructor(private val eventBus: EventBus) {
         this.consulClient = ConsulClient.create(event.vertx, consulClientOptions)
         var serviceOptions = ServiceOptions()
         serviceOptions.address = conf.server.address
-        serviceOptions.id = "template"
-        serviceOptions.name = "template"
+        serviceOptions.id = mainServiceName
+        serviceOptions.name = mainServiceName
         serviceOptions.port = conf.server.port.toInt()
         this.consulClient?.registerService(serviceOptions, {
           if(it.succeeded()) {
@@ -59,8 +60,8 @@ class DiscoveryListener @Inject constructor(private val eventBus: EventBus) {
         })
         serviceOptions = ServiceOptions()
         serviceOptions.address = conf.management.address
-        serviceOptions.id = "templateMetrics"
-        serviceOptions.name = "templateMetrics"
+        serviceOptions.id = metricsServiceName
+        serviceOptions.name = metricsServiceName
         serviceOptions.port = conf.management.port.toInt()
         this.consulClient?.registerService(serviceOptions, {
           if(it.succeeded()) {
@@ -69,6 +70,9 @@ class DiscoveryListener @Inject constructor(private val eventBus: EventBus) {
             logger.error("Error registering the metrics server in consul", it.cause())
           }
         })
+        if(this.consulClient != null) {
+          event.vertx.orCreateContext.put(ContextObjects.CONSUL.key, this.consulClient as ConsulClient)
+        }
       }
     } else {
       logger.error("Vertx object not found!")
@@ -78,20 +82,25 @@ class DiscoveryListener @Inject constructor(private val eventBus: EventBus) {
   @PreDestroy
   fun destroy() {
     this.eventBus.unregister(this)
-    this.consulClient?.deregisterService("template", {
+    this.consulClient?.deregisterService(mainServiceName, {
       if(it.succeeded()) {
         logger.info("Sucessfully deregistered the main server in consul")
       } else {
         logger.error("Error deregistering the main server in consul", it.cause())
       }
     })
-    this.consulClient?.deregisterService("templateMetrics", {
+    this.consulClient?.deregisterService(metricsServiceName, {
       if(it.succeeded()) {
         logger.info("Sucessfully deregistered the metrics server in consul")
       } else {
         logger.error("Error deregistering the metrics server in consul", it.cause())
       }
     })
+  }
+
+  private companion object {
+    const val mainServiceName = "template"
+    const val metricsServiceName = "templateMetrics"
   }
 
 }

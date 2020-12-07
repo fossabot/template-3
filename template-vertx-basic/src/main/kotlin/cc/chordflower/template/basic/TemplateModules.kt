@@ -270,4 +270,8 @@ class TemplateModules {
     return logglyAppender
   }
 
+  companion object {
+    const val APP_NAME = "Template"
+  }
+
 }

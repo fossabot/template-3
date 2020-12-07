@@ -2,6 +2,7 @@ package cc.chordflower.template.basic
 
 import cc.chordflower.template.basic.application.config.Configuration
 import cc.chordflower.template.basic.application.events.Event
+import cc.chordflower.template.basic.application.utils.ContextObjects
 import cc.chordflower.template.basic.application.utils.currentEnvPath
 import io.vertx.config.ConfigRetriever
 import io.vertx.config.ConfigRetrieverOptions
@@ -9,13 +10,20 @@ import io.vertx.config.ConfigStoreOptions
 import io.vertx.core.Vertx
 import io.vertx.core.VertxOptions
 import io.vertx.core.json.JsonObject
+import io.vertx.micrometer.MicrometerMetricsOptions
+import io.vertx.micrometer.VertxJmxMetricsOptions
+import io.vertx.micrometer.VertxPrometheusOptions
 import org.apache.deltaspike.cdise.api.CdiContainerLoader
 import org.apache.deltaspike.core.api.provider.BeanProvider
+import org.bouncycastle.jce.provider.BouncyCastleProvider
+import org.bouncycastle.jsse.provider.BouncyCastleJsseProvider
+import org.bouncycastle.pqc.jcajce.provider.BouncyCastlePQCProvider
 import org.greenrobot.eventbus.EventBus
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.slf4j.bridge.SLF4JBridgeHandler
 import java.nio.file.Paths
+import java.security.Security
 import javax.enterprise.context.ApplicationScoped
 
 object TemplateApp : Runnable {
@@ -24,6 +32,9 @@ object TemplateApp : Runnable {
   private val logger : Logger = LoggerFactory.getLogger(TemplateApp::class.java)
 
   override fun run() {
+    Security.insertProviderAt(BouncyCastleProvider(),1)
+    Security.insertProviderAt(BouncyCastleJsseProvider(),2)
+    Security.insertProviderAt(BouncyCastlePQCProvider(),3)
     SLF4JBridgeHandler.removeHandlersForRootLogger()
     SLF4JBridgeHandler.install()
     val cdiContainer = CdiContainerLoader.getCdiContainer()
@@ -43,6 +54,10 @@ object TemplateApp : Runnable {
 
     val vertxOptions = VertxOptions()
     vertxOptions.preferNativeTransport = true
+    vertxOptions.metricsOptions = MicrometerMetricsOptions()
+      .setPrometheusOptions(VertxPrometheusOptions().setEnabled(true).setPublishQuantiles(true))
+      .setJmxMetricsOptions(VertxJmxMetricsOptions().setEnabled(true))
+      .setJvmMetricsEnabled(true).setEnabled(true)
 
     val vertx = Vertx.vertx(vertxOptions)
 
@@ -67,7 +82,7 @@ object TemplateApp : Runnable {
         logger.info("Parsed the configuration!")
         val configuration = Configuration(json.result())
         eventBus.post(Event.ConfigurationParsingEvent(configuration, vertx))
-        vertx.orCreateContext.put("configuration", configuration)
+        vertx.orCreateContext.put(ContextObjects.CONFIGURATION.key, configuration)
 
         if( logger is ch.qos.logback.classic.Logger && configuration.loggly.enabled ) {
           logger.addAppender(BeanProvider.getContextualReference(TemplateModules::class.java).createLogglyAppender(configuration.loggly))

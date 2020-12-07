@@ -1,5 +1,6 @@
 package cc.chordflower.template.basic.application.utils
 
+import cc.chordflower.template.basic.TemplateModules
 import java.nio.file.Path
 import java.nio.file.Paths
 import java.util.*
@@ -8,32 +9,32 @@ import java.util.*
 interface EnvPath {
   enum class EnvPaths(override val userDataPath: Path, override val userConfigPath: Path, override val userCachePath: Path, override val userLogPath: Path, override val systemDataPath: Path, override val systemConfigPath: Path, override val systemCachePath: Path, override val systemLogPath: Path) : EnvPath {
     WINDOWS(
-      userDataPath = Paths.get(Optional.ofNullable<String>(System.getenv("LOCALAPPDATA")).orElse(Paths.get(System.getenv("USERPROFILE"), "AppData", "Local").toAbsolutePath().normalize().toString()), "Dracpond", "Data"),
-      userConfigPath = Paths.get(Optional.ofNullable<String>(System.getenv("APPDATA")).orElse(Paths.get(System.getenv("USERPROFILE"), "AppData", "Roaming").toAbsolutePath().normalize().toString()), "Dracpond", "Config"),
-      userCachePath = Paths.get(Optional.ofNullable<String>(System.getenv("LOCALAPPDATA")).orElse(Paths.get(System.getenv("USERPROFILE"), "AppData", "Local").toAbsolutePath().normalize().toString()), "Dracpond", "Cache"),
-      userLogPath = Paths.get(Optional.ofNullable<String>(System.getenv("LOCALAPPDATA")).orElse(Paths.get(System.getenv("USERPROFILE"), "AppData", "Local").toAbsolutePath().normalize().toString()), "Dracpond", "Log"),
-      systemDataPath = Paths.get(System.getenv("ProgramData"), "Dracpond", "Data"),
-      systemConfigPath = Paths.get(System.getenv("ProgramData"), "Dracpond", "Config"),
-      systemCachePath = Paths.get(System.getenv("ProgramData"), "Dracpond", "Cache"),
-      systemLogPath = Paths.get(System.getenv("ProgramData"), "Dracpond", "Log")),
+      userDataPath = Paths.get(Optional.ofNullable<String>(System.getenv("LOCALAPPDATA")).orElse(Paths.get(System.getenv("USERPROFILE"), "AppData", "Local").toAbsolutePath().normalize().toString()), TemplateModules.APP_NAME, "Data"),
+      userConfigPath = Paths.get(Optional.ofNullable<String>(System.getenv("APPDATA")).orElse(Paths.get(System.getenv("USERPROFILE"), "AppData", "Roaming").toAbsolutePath().normalize().toString()), TemplateModules.APP_NAME, "Config"),
+      userCachePath = Paths.get(Optional.ofNullable<String>(System.getenv("LOCALAPPDATA")).orElse(Paths.get(System.getenv("USERPROFILE"), "AppData", "Local").toAbsolutePath().normalize().toString()), TemplateModules.APP_NAME, "Cache"),
+      userLogPath = Paths.get(Optional.ofNullable<String>(System.getenv("LOCALAPPDATA")).orElse(Paths.get(System.getenv("USERPROFILE"), "AppData", "Local").toAbsolutePath().normalize().toString()), TemplateModules.APP_NAME, "Log"),
+      systemDataPath = Paths.get(System.getenv("ProgramData"), TemplateModules.APP_NAME, "Data"),
+      systemConfigPath = Paths.get(System.getenv("ProgramData"), TemplateModules.APP_NAME, "Config"),
+      systemCachePath = Paths.get(System.getenv("ProgramData"), TemplateModules.APP_NAME, "Cache"),
+      systemLogPath = Paths.get(System.getenv("ProgramData"), TemplateModules.APP_NAME, "Log")),
     LINUX(
-      userDataPath = Paths.get(Optional.ofNullable<String>(System.getenv("XDG_DATA_HOME")).orElse(Paths.get(System.getProperty("user.home"), ".local", "share").toAbsolutePath().normalize().toString()), "Dracpond"),
-      userConfigPath = Paths.get(Optional.ofNullable<String>(System.getenv("XDG_CONFIG_HOME")).orElse(Paths.get(System.getProperty("user.home"), ".config").toAbsolutePath().normalize().toString()), "Dracpond"),
-      userCachePath = Paths.get(Optional.ofNullable<String>(System.getenv("XDG_CACHE_HOME")).orElse(Paths.get(System.getProperty("user.home"), ".cache").toAbsolutePath().normalize().toString()), "Dracpond"),
-      userLogPath = Paths.get(Optional.ofNullable<String>(System.getenv("XDG_STATE_HOME")).orElse(Paths.get(System.getProperty("user.home"), ".local", "state").toAbsolutePath().normalize().toString()), "Dracpond"),
-      systemDataPath = Paths.get("/", "usr", "share", "Dracpond"),
-      systemConfigPath = Paths.get("/", "etc", "Dracond"),
-      systemCachePath = Paths.get("/", "var", "cache", "Dracpond"),
-      systemLogPath = Paths.get("/", "var", "log", "Dracpond")),
+      userDataPath = Paths.get(Optional.ofNullable<String>(System.getenv("XDG_DATA_HOME")).orElse(Paths.get(System.getProperty("user.home"), ".local", "share").toAbsolutePath().normalize().toString()), TemplateModules.APP_NAME),
+      userConfigPath = Paths.get(Optional.ofNullable<String>(System.getenv("XDG_CONFIG_HOME")).orElse(Paths.get(System.getProperty("user.home"), ".config").toAbsolutePath().normalize().toString()), TemplateModules.APP_NAME),
+      userCachePath = Paths.get(Optional.ofNullable<String>(System.getenv("XDG_CACHE_HOME")).orElse(Paths.get(System.getProperty("user.home"), ".cache").toAbsolutePath().normalize().toString()), TemplateModules.APP_NAME),
+      userLogPath = Paths.get(Optional.ofNullable<String>(System.getenv("XDG_STATE_HOME")).orElse(Paths.get(System.getProperty("user.home"), ".local", "state").toAbsolutePath().normalize().toString()), TemplateModules.APP_NAME),
+      systemDataPath = Paths.get("/", "usr", "share", TemplateModules.APP_NAME),
+      systemConfigPath = Paths.get("/", "etc", TemplateModules.APP_NAME),
+      systemCachePath = Paths.get("/", "var", "cache", TemplateModules.APP_NAME),
+      systemLogPath = Paths.get("/", "var", "log", TemplateModules.APP_NAME)),
     MACOS(
-      userDataPath = Paths.get(Paths.get(System.getProperty("user.home"), "Library").toAbsolutePath().normalize().toString(), "Application Support", "Dracpond"),
-      userConfigPath = Paths.get(Paths.get(System.getProperty("user.home"), "Library").toAbsolutePath().normalize().toString(), "Preferences", "Dracpond"),
-      userCachePath = Paths.get(Paths.get(System.getProperty("user.home"), "Library").toAbsolutePath().normalize().toString(), "Caches", "Dracpond"),
-      userLogPath = Paths.get(Paths.get(System.getProperty("user.home"), "Library").toAbsolutePath().normalize().toString(), "Logs", "Dracpond"),
-      systemDataPath = Paths.get("/", "Library", "Application Support", "Dracpond"),
-      systemConfigPath = Paths.get("/", "Library", "Preferences", "Dracond"),
-      systemCachePath = Paths.get("/", "Library", "Caches", "Dracpond"),
-      systemLogPath = Paths.get("/", "Library", "Logs", "Dracpond"),
+      userDataPath = Paths.get(Paths.get(System.getProperty("user.home"), "Library").toAbsolutePath().normalize().toString(), "Application Support", TemplateModules.APP_NAME),
+      userConfigPath = Paths.get(Paths.get(System.getProperty("user.home"), "Library").toAbsolutePath().normalize().toString(), "Preferences", TemplateModules.APP_NAME),
+      userCachePath = Paths.get(Paths.get(System.getProperty("user.home"), "Library").toAbsolutePath().normalize().toString(), "Caches", TemplateModules.APP_NAME),
+      userLogPath = Paths.get(Paths.get(System.getProperty("user.home"), "Library").toAbsolutePath().normalize().toString(), "Logs", TemplateModules.APP_NAME),
+      systemDataPath = Paths.get("/", "Library", "Application Support", TemplateModules.APP_NAME),
+      systemConfigPath = Paths.get("/", "Library", "Preferences", TemplateModules.APP_NAME),
+      systemCachePath = Paths.get("/", "Library", "Caches", TemplateModules.APP_NAME),
+      systemLogPath = Paths.get("/", "Library", "Logs", TemplateModules.APP_NAME),
     );
   }
 

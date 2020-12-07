@@ -2,6 +2,7 @@ package cc.chordflower.template.basic.application
 
 import cc.chordflower.template.basic.application.config.Configuration
 import cc.chordflower.template.basic.application.events.Event
+import cc.chordflower.template.basic.application.utils.ContextObjects
 import io.vavr.control.Option
 import io.vertx.ext.mail.MailClient
 import io.vertx.ext.mail.MailConfig
@@ -32,7 +33,7 @@ class MailListener @Inject constructor(private val eventBus: EventBus) {
   fun registerMailClient( event : Event.LoggerConfiguredEvent) {
     if( event.vertx != null ) {
       logger.info("Creating mail client")
-      val conf = Option.of(event.vertx.orCreateContext.get<Configuration>("configuration")).getOrElseThrow( ::IllegalArgumentException )
+      val conf = Option.of(event.vertx.orCreateContext.get<Configuration>(ContextObjects.CONFIGURATION.key)).getOrElseThrow( ::IllegalArgumentException )
       val mailConfig = MailConfig()
       mailConfig.hostname = conf.mail.address
       mailConfig.port = conf.mail.port.toInt()
@@ -43,7 +44,7 @@ class MailListener @Inject constructor(private val eventBus: EventBus) {
       if(conf.mail.password.isNotEmpty()) {
         mailConfig.password = conf.mail.password
       }
-      event.vertx.orCreateContext.put("mail", MailClient.create(event.vertx, mailConfig))
+      event.vertx.orCreateContext.put(ContextObjects.MAIL.key, MailClient.create(event.vertx, mailConfig))
       logger.info("Mail client created")
     } else {
       logger.error("Vertx object not found!")

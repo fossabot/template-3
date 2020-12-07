@@ -29,6 +29,7 @@
     <classgraph.version>4.8.90</classgraph.version>
     <logstash-logback-encoder.version>6.5</logstash-logback-encoder.version>
     <maven.test.skip>false</maven.test.skip>
+    <bcprov-jdk15on.version>1.67</bcprov-jdk15on.version>
   </properties>
   <dependencies>
     <!-- VertX -->
@@ -93,6 +94,20 @@
     <dependency>
       <groupId>io.vertx</groupId>
       <artifactId>vertx-lang-kotlin</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.vertx</groupId>
+      <artifactId>vertx-auth-common</artifactId>
+    </dependency>
+
+    <!-- Micrometer metrics -->
+    <dependency>
+      <groupId>io.micrometer</groupId>
+      <artifactId>micrometer-registry-prometheus</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.micrometer</groupId>
+      <artifactId>micrometer-registry-jmx</artifactId>
     </dependency>
 
     <!-- Dependency Injection -->
@@ -349,6 +364,33 @@
       <groupId>io.github.classgraph</groupId>
       <artifactId>classgraph</artifactId>
       <version>${classgraph.version}</version>
+    </dependency>
+
+    <!-- Bouncy Castle -->
+    <dependency>
+      <groupId>org.bouncycastle</groupId>
+      <artifactId>bcprov-jdk15on</artifactId>
+      <version>${bcprov-jdk15on.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.bouncycastle</groupId>
+      <artifactId>bcpkix-jdk15on</artifactId>
+      <version>${bcprov-jdk15on.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.bouncycastle</groupId>
+      <artifactId>bcmail-jdk15on</artifactId>
+      <version>${bcprov-jdk15on.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.bouncycastle</groupId>
+      <artifactId>bcpg-jdk15on</artifactId>
+      <version>${bcprov-jdk15on.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.bouncycastle</groupId>
+      <artifactId>bctls-jdk15on</artifactId>
+      <version>${bcprov-jdk15on.version}</version>
     </dependency>
 
     <dependency>

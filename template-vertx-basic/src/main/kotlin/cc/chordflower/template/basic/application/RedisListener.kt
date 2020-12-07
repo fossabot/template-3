@@ -2,6 +2,7 @@ package cc.chordflower.template.basic.application
 
 import cc.chordflower.template.basic.application.config.Configuration
 import cc.chordflower.template.basic.application.events.Event
+import cc.chordflower.template.basic.application.utils.ContextObjects
 import io.vavr.control.Option
 import io.vertx.redis.client.Redis
 import io.vertx.redis.client.RedisOptions
@@ -33,12 +34,12 @@ class RedisListener @Inject constructor(private val eventBus: EventBus) {
     if(event.vertx != null) {
       logger.info("Creating redis client...")
       val redisOptions = RedisOptions()
-      val conf = Option.of(event.vertx.orCreateContext.get<Configuration>("configuration")).getOrElseThrow( ::IllegalArgumentException )
+      val conf = Option.of(event.vertx.orCreateContext.get<Configuration>(ContextObjects.CONFIGURATION.key)).getOrElseThrow( ::IllegalArgumentException )
       redisOptions.addConnectionString("""redis://${conf.redis.host}:${conf.redis.port}/${conf.redis.database.toLong()}""")
       if(conf.redis.password.isNotEmpty()) {
         redisOptions.password = conf.redis.password
       }
-      event.vertx.orCreateContext.put("redis", Redis.createClient(event.vertx, redisOptions))
+      event.vertx.orCreateContext.put(ContextObjects.REDIS.key, Redis.createClient(event.vertx, redisOptions))
     } else {
       logger.error("Vertx object not found!")
     }
