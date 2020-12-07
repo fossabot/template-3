@@ -28,7 +28,7 @@ import javax.inject.Named
 
 @Suppress("unused")
 @ApplicationScoped
-@Named("MainServerVertex")
+@Named
 class MainServerVertex : AbstractVerticle {
 
   private val logger : Logger = LoggerFactory.getLogger(MainServerVertex::class.java)
