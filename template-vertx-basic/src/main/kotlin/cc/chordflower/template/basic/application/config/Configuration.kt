@@ -7,6 +7,8 @@ import java.util.*
 import javax.validation.Validator
 
 class Configuration : BaseConfiguration, ValidatedObject {
+  constructor() : super()
+
   constructor(it: JsonObject?) : super() {
     Objects.requireNonNull(it)
     if(it != null) {

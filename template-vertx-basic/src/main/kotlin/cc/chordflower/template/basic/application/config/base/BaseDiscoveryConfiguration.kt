@@ -25,7 +25,6 @@ open class BaseDiscoveryConfiguration : Serializable {
   @JsonProperty("enabled")
   @JsonPropertyDescription("Enable the consul registration")
   var enabled: Boolean
-    protected set
 
   /**
    * The location of the consul server

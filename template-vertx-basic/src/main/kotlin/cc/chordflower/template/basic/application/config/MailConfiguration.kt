@@ -8,6 +8,7 @@ import java.util.*
 import javax.validation.Validator
 
 class MailConfiguration : BaseMailConfiguration, ValidatedObject {
+  constructor() : super()
 
   constructor( it : JsonObject? ) : super() {
     Objects.requireNonNull(it)

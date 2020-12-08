@@ -11,6 +11,7 @@ import javax.validation.Validator
  * Represents a redis configuration.
  */
 class RedisConfiguration : BaseRedisConfiguration, ValidatedObject {
+  constructor() : super()
 
   /**
    * Creates a new redis configuration given a json object.
