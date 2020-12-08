@@ -2,14 +2,13 @@ package cc.chordflower.template.basic.application.events
 
 import cc.chordflower.template.basic.application.config.Configuration
 import io.vavr.collection.Array
-import io.vertx.core.Vertx
 import java.util.*
 
-abstract class Event<T> protected constructor(val eventType: EventType, val data: T, val vertx: Vertx? = null) {
+abstract class Event<T> protected constructor(val eventType: EventType, val data: T) {
   class BeforeStartEvent : Event<Unit>(EventType.BEFORE_START, Unit)
   class ParseArgumentsEvent(arg: Array<String>) : Event<Array<String>>(EventType.PARSE_ARGUMENTS, arg)
-  class ConfigurationParsingEvent(configuration: Configuration, vertx: Vertx) : Event<Configuration>(EventType.CONFIG_PARSER, configuration, vertx)
-  class LoggerConfiguredEvent(vertx: Vertx) : Event<Unit>(EventType.LOGGING_CONFIURATION, Unit, vertx)
+  class ConfigurationParsingEvent(configuration: Configuration) : Event<Configuration>(EventType.CONFIG_PARSER, configuration)
+  class LoggerConfiguredEvent : Event<Unit>(EventType.LOGGING_CONFIURATION, Unit)
 
   override fun equals(other: Any?): Boolean {
     if(this === other) {

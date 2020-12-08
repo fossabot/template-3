@@ -18,6 +18,11 @@ import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.fasterxml.jackson.module.mrbean.MrBeanModule
 import com.fasterxml.jackson.module.paranamer.ParanamerModule
 import io.vavr.jackson.datatype.VavrModule
+import io.vertx.core.Vertx
+import io.vertx.core.VertxOptions
+import io.vertx.micrometer.MicrometerMetricsOptions
+import io.vertx.micrometer.VertxJmxMetricsOptions
+import io.vertx.micrometer.VertxPrometheusOptions
 import net.logstash.logback.composite.ContextJsonProvider
 import net.logstash.logback.composite.JsonProviders
 import net.logstash.logback.composite.loggingevent.CallerDataJsonProvider
@@ -54,6 +59,21 @@ class TemplateModules {
       .sendNoSubscriberEvent(false)
       .addIndex(AppEventIndex())
       .build()
+  }
+
+  @Singleton
+  @Produces
+  @NotNull
+  @Named("vertx")
+  fun createVertx(): Vertx {
+    val vertxOptions = VertxOptions()
+    vertxOptions.preferNativeTransport = true
+    vertxOptions.metricsOptions = MicrometerMetricsOptions()
+      .setPrometheusOptions(VertxPrometheusOptions().setEnabled(true).setPublishQuantiles(true))
+      .setJmxMetricsOptions(VertxJmxMetricsOptions().setEnabled(true))
+      .setJvmMetricsEnabled(true).setEnabled(true)
+
+    return Vertx.vertx(vertxOptions)
   }
 
   @Singleton

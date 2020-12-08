@@ -8,11 +8,7 @@ import io.vertx.config.ConfigRetriever
 import io.vertx.config.ConfigRetrieverOptions
 import io.vertx.config.ConfigStoreOptions
 import io.vertx.core.Vertx
-import io.vertx.core.VertxOptions
 import io.vertx.core.json.JsonObject
-import io.vertx.micrometer.MicrometerMetricsOptions
-import io.vertx.micrometer.VertxJmxMetricsOptions
-import io.vertx.micrometer.VertxPrometheusOptions
 import org.apache.deltaspike.cdise.api.CdiContainerLoader
 import org.apache.deltaspike.core.api.provider.BeanProvider
 import org.bouncycastle.jce.provider.BouncyCastleProvider
@@ -52,14 +48,7 @@ object TemplateApp : Runnable {
 
     eventBus.post(Event.ParseArgumentsEvent(io.vavr.collection.Array.of(*args)))
 
-    val vertxOptions = VertxOptions()
-    vertxOptions.preferNativeTransport = true
-    vertxOptions.metricsOptions = MicrometerMetricsOptions()
-      .setPrometheusOptions(VertxPrometheusOptions().setEnabled(true).setPublishQuantiles(true))
-      .setJmxMetricsOptions(VertxJmxMetricsOptions().setEnabled(true))
-      .setJvmMetricsEnabled(true).setEnabled(true)
-
-    val vertx = Vertx.vertx(vertxOptions)
+    val vertx = BeanProvider.getContextualReference(Vertx::class.java)
 
     val options = ConfigRetrieverOptions().setIncludeDefaultStores(false)
     options.addStore(jsonFileConfigStore.setConfig(JsonObject().put("path", "./config.json")))
@@ -81,14 +70,13 @@ object TemplateApp : Runnable {
       if(!json.failed()) {
         logger.info("Parsed the configuration!")
         val configuration = Configuration(json.result())
-        eventBus.post(Event.ConfigurationParsingEvent(configuration, vertx))
+        eventBus.post(Event.ConfigurationParsingEvent(configuration))
         vertx.orCreateContext.put(ContextObjects.CONFIGURATION.key, configuration)
 
         if( logger is ch.qos.logback.classic.Logger && configuration.loggly.enabled ) {
           logger.addAppender(BeanProvider.getContextualReference(TemplateModules::class.java).createLogglyAppender(configuration.loggly))
         }
-        eventBus.post(Event.LoggerConfiguredEvent(vertx))
-
+        eventBus.post(Event.LoggerConfiguredEvent())
       } else {
         logger.error("Configuration parsing failed!", json.cause())
       }

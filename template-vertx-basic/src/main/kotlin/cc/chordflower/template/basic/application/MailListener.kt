@@ -4,6 +4,7 @@ import cc.chordflower.template.basic.application.config.Configuration
 import cc.chordflower.template.basic.application.events.Event
 import cc.chordflower.template.basic.application.utils.ContextObjects
 import io.vavr.control.Option
+import io.vertx.core.Vertx
 import io.vertx.ext.mail.MailClient
 import io.vertx.ext.mail.MailConfig
 import io.vertx.ext.mail.StartTLSOptions
@@ -20,7 +21,7 @@ import javax.inject.Named
 
 @ApplicationScoped
 @Named
-class MailListener @Inject constructor(private val eventBus: EventBus) {
+class MailListener @Inject constructor(private val eventBus: EventBus, private val vertx: Vertx) {
 
   private val logger : Logger = LoggerFactory.getLogger(MailListener::class.java)
 
@@ -29,26 +30,25 @@ class MailListener @Inject constructor(private val eventBus: EventBus) {
     this.eventBus.register(this)
   }
 
+  internal var mailClientCreator : Function2<Vertx, MailConfig, MailClient> = MailClient::create
+
+  @Suppress("UNUSED_PARAMETER")
   @Subscribe(threadMode = ThreadMode.POSTING)
   fun registerMailClient( event : Event.LoggerConfiguredEvent) {
-    if( event.vertx != null ) {
-      logger.info("Creating mail client")
-      val conf = Option.of(event.vertx.orCreateContext.get<Configuration>(ContextObjects.CONFIGURATION.key)).getOrElseThrow( ::IllegalArgumentException )
-      val mailConfig = MailConfig()
-      mailConfig.hostname = conf.mail.address
-      mailConfig.port = conf.mail.port.toInt()
-      mailConfig.starttls = if(conf.mail.secure) StartTLSOptions.DISABLED else StartTLSOptions.REQUIRED
-      if(conf.mail.username.isNotEmpty()) {
-        mailConfig.username = conf.mail.username
-      }
-      if(conf.mail.password.isNotEmpty()) {
-        mailConfig.password = conf.mail.password
-      }
-      event.vertx.orCreateContext.put(ContextObjects.MAIL.key, MailClient.create(event.vertx, mailConfig))
-      logger.info("Mail client created")
-    } else {
-      logger.error("Vertx object not found!")
+    logger.info("Creating mail client")
+    val conf = Option.of(this.vertx.orCreateContext.get<Configuration>(ContextObjects.CONFIGURATION.key)).getOrElseThrow( ::IllegalArgumentException )
+    val mailConfig = MailConfig()
+    mailConfig.hostname = conf.mail.address
+    mailConfig.port = conf.mail.port.toInt()
+    mailConfig.starttls = if(!conf.mail.secure) StartTLSOptions.DISABLED else StartTLSOptions.REQUIRED
+    if(conf.mail.username.isNotEmpty()) {
+      mailConfig.username = conf.mail.username
     }
+    if(conf.mail.password.isNotEmpty()) {
+      mailConfig.password = conf.mail.password
+    }
+    this.vertx.orCreateContext.put(ContextObjects.MAIL.key, this.mailClientCreator(vertx, mailConfig))
+    logger.info("Mail client created")
   }
 
   @PreDestroy
