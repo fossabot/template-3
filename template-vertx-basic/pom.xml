@@ -31,6 +31,11 @@
     <maven.test.skip>false</maven.test.skip>
     <bcprov-jdk15on.version>1.67</bcprov-jdk15on.version>
     <mockito-core.version>3.6.28</mockito-core.version>
+    <javax.ws.rs-api.version>2.1.1</javax.ws.rs-api.version>
+    <jodd-util.version>6.0.0</jodd-util.version>
+    <jackson-dataformat-msgpack.version>0.8.22</jackson-dataformat-msgpack.version>
+    <bson4jackson.version>2.11.0</bson4jackson.version>
+    <guava.version>30.1-jre</guava.version>
   </properties>
   <dependencies>
     <!-- VertX -->
@@ -194,6 +199,10 @@
       <groupId>org.jetbrains.kotlin</groupId>
       <artifactId>kotlin-stdlib</artifactId>
     </dependency>
+    <dependency>
+      <groupId>org.jetbrains.kotlin</groupId>
+      <artifactId>kotlin-reflect</artifactId>
+    </dependency>
 
     <!-- Slf4j -->
     <dependency>
@@ -344,6 +353,28 @@
       <artifactId>jackson-module-blackbird</artifactId>
       <version>${jackson-module-blackbird.version}</version>
     </dependency>
+    <dependency>
+      <groupId>org.msgpack</groupId>
+      <artifactId>jackson-dataformat-msgpack</artifactId>
+      <version>${jackson-dataformat-msgpack.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>de.undercouch</groupId>
+      <artifactId>bson4jackson</artifactId>
+      <version>${bson4jackson.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.dataformat</groupId>
+      <artifactId>jackson-dataformat-cbor</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.dataformat</groupId>
+      <artifactId>jackson-dataformat-ion</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.dataformat</groupId>
+      <artifactId>jackson-dataformat-smile</artifactId>
+    </dependency>
 
     <!-- Utilities -->
     <dependency>
@@ -362,9 +393,9 @@
       <version>${byteunits.version}</version>
     </dependency>
     <dependency>
-      <groupId>io.github.classgraph</groupId>
-      <artifactId>classgraph</artifactId>
-      <version>${classgraph.version}</version>
+      <groupId>org.jodd</groupId>
+      <artifactId>jodd-util</artifactId>
+      <version>${jodd-util.version}</version>
     </dependency>
 
     <!-- Bouncy Castle -->
@@ -553,7 +584,7 @@ resolve: Take the element from the resolved POM.
   </build>
   <profiles>
     <profile>
-      <id>generate-beans-from-json-schema</id>
+      <id>generate-config-beans-from-json-schema</id>
       <build>
         <plugins>
           <plugin>
@@ -575,6 +606,46 @@ resolve: Take the element from the resolved POM.
                   <classNamePrefix>Base</classNamePrefix>
                 </configuration>
               </execution>
+            </executions>
+            <configuration>
+              <addCompileSourceRoot>false</addCompileSourceRoot>
+              <annotationStyle>jackson2</annotationStyle>
+              <dateTimeType>java.time.LocalDateTime</dateTimeType>
+              <dateType>java.time.LocalDate</dateType>
+              <generateBuilders>false</generateBuilders>
+              <includeAdditionalProperties>false</includeAdditionalProperties>
+              <includeConstructors>false</includeConstructors>
+              <includeGetters>true</includeGetters>
+              <includeHashcodeAndEquals>false</includeHashcodeAndEquals>
+              <includeJsr303Annotations>true</includeJsr303Annotations>
+              <includeJsr305Annotations>false</includeJsr305Annotations>
+              <includeSetters>true</includeSetters>
+              <includeToString>false</includeToString>
+              <includeTypeInfo>false</includeTypeInfo>
+              <initializeCollections>true</initializeCollections>
+              <serializable>true</serializable>
+              <sourceType>jsonschema</sourceType>
+              <targetVersion>1.8</targetVersion>
+              <timeType>java.time.LocalTime</timeType>
+              <useBigDecimals>true</useBigDecimals>
+              <useBigIntegers>true</useBigIntegers>
+              <useLongIntegers>true</useLongIntegers>
+              <useOptionalForGetters>false</useOptionalForGetters>
+              <useTitleAsClassname>true</useTitleAsClassname>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+    <profile>
+      <id>generate-api-beans-from-json-schema</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.jsonschema2pojo</groupId>
+            <artifactId>jsonschema2pojo-maven-plugin</artifactId>
+            <version>1.0.2</version>
+            <executions>
               <execution>
                 <id>generate-api-beans</id>
                 <phase>generate-sources</phase>

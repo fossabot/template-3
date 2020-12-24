@@ -136,9 +136,9 @@ class ManagementServerVertex : AbstractVerticle {
     healthCheckHandler.register("main", { it.complete(Status.OK()) })
 
     val router = Router.router(this.vertx)
-    router.route()
+    router.route().handler(bodyHandler)
       .handler(corsHandler).handler(cspHandler).handler(csrfHandler).handler(errorHandler)
-      .handler(sessionHandler).handler(bodyHandler).handler(authenticationHandler)
+      .handler(sessionHandler).handler(authenticationHandler)
     this.logger.debug("Registered the global handlers")
 
     router.route("/metrics").handler(PrometheusScrapingHandler.create())

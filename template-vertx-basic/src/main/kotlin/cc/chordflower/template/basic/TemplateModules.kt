@@ -6,10 +6,14 @@ import ch.qos.logback.classic.spi.ILoggingEvent
 import ch.qos.logback.ext.loggly.LogglyAppender
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.MapperFeature
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.databind.json.JsonMapper
+import com.fasterxml.jackson.dataformat.cbor.databind.CBORMapper
 import com.fasterxml.jackson.dataformat.csv.CsvMapper
+import com.fasterxml.jackson.dataformat.ion.IonObjectMapper
 import com.fasterxml.jackson.dataformat.javaprop.JavaPropsMapper
+import com.fasterxml.jackson.dataformat.smile.databind.SmileMapper
 import com.fasterxml.jackson.dataformat.xml.XmlMapper
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
@@ -17,6 +21,7 @@ import com.fasterxml.jackson.module.blackbird.BlackbirdModule
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.fasterxml.jackson.module.mrbean.MrBeanModule
 import com.fasterxml.jackson.module.paranamer.ParanamerModule
+import de.undercouch.bson4jackson.BsonFactory
 import io.vavr.jackson.datatype.VavrModule
 import io.vertx.core.Vertx
 import io.vertx.core.VertxOptions
@@ -41,6 +46,7 @@ import net.logstash.logback.layout.LoggingEventCompositeJsonLayout
 import net.logstash.logback.stacktrace.ShortenedThrowableConverter
 import org.greenrobot.eventbus.EventBus
 import org.jetbrains.annotations.NotNull
+import org.msgpack.jackson.dataformat.MessagePackFactory
 import javax.enterprise.inject.Produces
 import javax.inject.Named
 import javax.inject.Singleton
@@ -202,6 +208,164 @@ class TemplateModules {
       .configure(MapperFeature.ALLOW_FINAL_FIELDS_AS_MUTATORS, false)
       .configure(MapperFeature.BLOCK_UNSAFE_POLYMORPHIC_BASE_TYPES, true)
       .build()
+  }
+
+  @Singleton
+  @Produces
+  @NotNull
+  @Named("CBORMapper")
+  fun createCBORMapper() : CBORMapper {
+    return CBORMapper.builder()
+      .addModule(BlackbirdModule())
+      .addModule(MrBeanModule())
+      .addModule(ParanamerModule())
+      .addModule(JavaTimeModule())
+      .addModule(VavrModule())
+      .addModule(KotlinModule())
+      .configure(DeserializationFeature.USE_BIG_DECIMAL_FOR_FLOATS, true)
+      .configure(DeserializationFeature.USE_BIG_INTEGER_FOR_INTS, true)
+      .configure(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_AS_NULL, true)
+      .configure(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_USING_DEFAULT_VALUE, true)
+      .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+      .configure(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES, true)
+      .configure(DeserializationFeature.WRAP_EXCEPTIONS, true)
+      .configure(DeserializationFeature.EAGER_DESERIALIZER_FETCH, true)
+      .configure(SerializationFeature.INDENT_OUTPUT, false)
+      .configure(SerializationFeature.WRAP_EXCEPTIONS, true)
+      .configure(SerializationFeature.CLOSE_CLOSEABLE, false)
+      .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
+      .configure(SerializationFeature.WRITE_DATE_KEYS_AS_TIMESTAMPS, false)
+      .configure(SerializationFeature.EAGER_SERIALIZER_FETCH, true)
+      .configure(SerializationFeature.USE_EQUALITY_FOR_OBJECT_ID, true)
+      .configure(MapperFeature.ALLOW_FINAL_FIELDS_AS_MUTATORS, false)
+      .configure(MapperFeature.BLOCK_UNSAFE_POLYMORPHIC_BASE_TYPES, true)
+      .build()
+  }
+
+  @Singleton
+  @Produces
+  @NotNull
+  @Named("IonMapper")
+  fun createIonMapper() : IonObjectMapper {
+    return IonObjectMapper.builder()
+      .addModule(BlackbirdModule())
+      .addModule(MrBeanModule())
+      .addModule(ParanamerModule())
+      .addModule(JavaTimeModule())
+      .addModule(VavrModule())
+      .addModule(KotlinModule())
+      .configure(DeserializationFeature.USE_BIG_DECIMAL_FOR_FLOATS, true)
+      .configure(DeserializationFeature.USE_BIG_INTEGER_FOR_INTS, true)
+      .configure(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_AS_NULL, true)
+      .configure(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_USING_DEFAULT_VALUE, true)
+      .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+      .configure(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES, true)
+      .configure(DeserializationFeature.WRAP_EXCEPTIONS, true)
+      .configure(DeserializationFeature.EAGER_DESERIALIZER_FETCH, true)
+      .configure(SerializationFeature.INDENT_OUTPUT, false)
+      .configure(SerializationFeature.WRAP_EXCEPTIONS, true)
+      .configure(SerializationFeature.CLOSE_CLOSEABLE, false)
+      .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
+      .configure(SerializationFeature.WRITE_DATE_KEYS_AS_TIMESTAMPS, false)
+      .configure(SerializationFeature.EAGER_SERIALIZER_FETCH, true)
+      .configure(SerializationFeature.USE_EQUALITY_FOR_OBJECT_ID, true)
+      .configure(MapperFeature.ALLOW_FINAL_FIELDS_AS_MUTATORS, false)
+      .configure(MapperFeature.BLOCK_UNSAFE_POLYMORPHIC_BASE_TYPES, true)
+      .build()
+  }
+
+  @Singleton
+  @Produces
+  @NotNull
+  @Named("SmileMapper")
+  fun createSmileMapper() : SmileMapper {
+    return SmileMapper.builder()
+      .addModule(BlackbirdModule())
+      .addModule(MrBeanModule())
+      .addModule(ParanamerModule())
+      .addModule(JavaTimeModule())
+      .addModule(VavrModule())
+      .addModule(KotlinModule())
+      .configure(DeserializationFeature.USE_BIG_DECIMAL_FOR_FLOATS, true)
+      .configure(DeserializationFeature.USE_BIG_INTEGER_FOR_INTS, true)
+      .configure(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_AS_NULL, true)
+      .configure(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_USING_DEFAULT_VALUE, true)
+      .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+      .configure(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES, true)
+      .configure(DeserializationFeature.WRAP_EXCEPTIONS, true)
+      .configure(DeserializationFeature.EAGER_DESERIALIZER_FETCH, true)
+      .configure(SerializationFeature.INDENT_OUTPUT, false)
+      .configure(SerializationFeature.WRAP_EXCEPTIONS, true)
+      .configure(SerializationFeature.CLOSE_CLOSEABLE, false)
+      .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
+      .configure(SerializationFeature.WRITE_DATE_KEYS_AS_TIMESTAMPS, false)
+      .configure(SerializationFeature.EAGER_SERIALIZER_FETCH, true)
+      .configure(SerializationFeature.USE_EQUALITY_FOR_OBJECT_ID, true)
+      .configure(MapperFeature.ALLOW_FINAL_FIELDS_AS_MUTATORS, false)
+      .configure(MapperFeature.BLOCK_UNSAFE_POLYMORPHIC_BASE_TYPES, true)
+      .build()
+  }
+
+  @Singleton
+  @Produces
+  @NotNull
+  @Named("BsonMapper")
+  fun createBsonMapper() : ObjectMapper {
+    return ObjectMapper( BsonFactory.builder().build() )
+      .registerModule(BlackbirdModule())
+      .registerModule(MrBeanModule())
+      .registerModule(ParanamerModule())
+      .registerModule(JavaTimeModule())
+      .registerModule(VavrModule())
+      .registerModule(KotlinModule())
+      .configure(DeserializationFeature.USE_BIG_DECIMAL_FOR_FLOATS, true)
+      .configure(DeserializationFeature.USE_BIG_INTEGER_FOR_INTS, true)
+      .configure(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_AS_NULL, true)
+      .configure(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_USING_DEFAULT_VALUE, true)
+      .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+      .configure(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES, true)
+      .configure(DeserializationFeature.WRAP_EXCEPTIONS, true)
+      .configure(DeserializationFeature.EAGER_DESERIALIZER_FETCH, true)
+      .configure(SerializationFeature.INDENT_OUTPUT, false)
+      .configure(SerializationFeature.WRAP_EXCEPTIONS, true)
+      .configure(SerializationFeature.CLOSE_CLOSEABLE, false)
+      .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
+      .configure(SerializationFeature.WRITE_DATE_KEYS_AS_TIMESTAMPS, false)
+      .configure(SerializationFeature.EAGER_SERIALIZER_FETCH, true)
+      .configure(SerializationFeature.USE_EQUALITY_FOR_OBJECT_ID, true)
+      .configure(MapperFeature.ALLOW_FINAL_FIELDS_AS_MUTATORS, false)
+      .configure(MapperFeature.BLOCK_UNSAFE_POLYMORPHIC_BASE_TYPES, true)
+  }
+
+  @Singleton
+  @Produces
+  @NotNull
+  @Named("messagePackMapper")
+  fun createMsgPackMapper() : ObjectMapper {
+    return ObjectMapper( MessagePackFactory.builder().build() )
+      .registerModule(BlackbirdModule())
+      .registerModule(MrBeanModule())
+      .registerModule(ParanamerModule())
+      .registerModule(JavaTimeModule())
+      .registerModule(VavrModule())
+      .registerModule(KotlinModule())
+      .configure(DeserializationFeature.USE_BIG_DECIMAL_FOR_FLOATS, true)
+      .configure(DeserializationFeature.USE_BIG_INTEGER_FOR_INTS, true)
+      .configure(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_AS_NULL, true)
+      .configure(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_USING_DEFAULT_VALUE, true)
+      .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+      .configure(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES, true)
+      .configure(DeserializationFeature.WRAP_EXCEPTIONS, true)
+      .configure(DeserializationFeature.EAGER_DESERIALIZER_FETCH, true)
+      .configure(SerializationFeature.INDENT_OUTPUT, false)
+      .configure(SerializationFeature.WRAP_EXCEPTIONS, true)
+      .configure(SerializationFeature.CLOSE_CLOSEABLE, false)
+      .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
+      .configure(SerializationFeature.WRITE_DATE_KEYS_AS_TIMESTAMPS, false)
+      .configure(SerializationFeature.EAGER_SERIALIZER_FETCH, true)
+      .configure(SerializationFeature.USE_EQUALITY_FOR_OBJECT_ID, true)
+      .configure(MapperFeature.ALLOW_FINAL_FIELDS_AS_MUTATORS, false)
+      .configure(MapperFeature.BLOCK_UNSAFE_POLYMORPHIC_BASE_TYPES, true)
   }
 
   @Singleton
