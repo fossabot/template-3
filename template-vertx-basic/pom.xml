@@ -27,7 +27,7 @@
     <kotest-runner-junit5-jvm.version>4.3.1</kotest-runner-junit5-jvm.version>
     <expekt.version>0.5.0</expekt.version>
     <classgraph.version>4.8.90</classgraph.version>
-    <logstash-logback-encoder.version>6.5</logstash-logback-encoder.version>
+    <logstash-logback-encoder.version>6.6</logstash-logback-encoder.version>
     <maven.test.skip>false</maven.test.skip>
     <bcprov-jdk15on.version>1.67</bcprov-jdk15on.version>
     <mockito-core.version>3.6.28</mockito-core.version>
