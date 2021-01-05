@@ -67,7 +67,7 @@
     <maven.clean.followSymLinks>true</maven.clean.followSymLinks>
     <!-- Versions -->
     <jackson.version>2.11.2</jackson.version>
-    <kotlin.version>1.4.20-M1</kotlin.version>
+    <kotlin.version>1.4.30-M1</kotlin.version>
     <junit-jupiter.version>5.7.0</junit-jupiter.version>
     <vaadin-bom.version>17.0.9</vaadin-bom.version>
     <deltaspike.version>1.9.4</deltaspike.version>
