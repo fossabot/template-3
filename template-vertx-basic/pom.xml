@@ -13,7 +13,7 @@
   <properties>
     <resources.directory>${project.basedir}/src/main/resources</resources.directory>
     <owb.version>2.0.20</owb.version>
-    <cdi-api.version>2.0.SP1</cdi-api.version>
+    <cdi-api.version>2.0</cdi-api.version>
     <quartz.version>2.3.2</quartz.version>
     <hibernate-validator.version>6.0.21.Final</hibernate-validator.version>
     <javax.el.version>3.0.1-b09</javax.el.version>
