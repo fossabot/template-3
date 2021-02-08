@@ -71,7 +71,7 @@
     <junit-jupiter.version>5.7.0</junit-jupiter.version>
     <vaadin-bom.version>17.0.9</vaadin-bom.version>
     <deltaspike.version>1.9.4</deltaspike.version>
-    <vertx.version>4.0.0.CR2</vertx.version>
+    <vertx.version>4.0.2</vertx.version>
     <micrometer-bom.version>1.5.5</micrometer-bom.version>
     <dokka.version>0.10.0</dokka.version>
   </properties>
