@@ -1,3 +1,5 @@
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fchordflower%2Ftemplate.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fchordflower%2Ftemplate?ref=badge_shield)
+
 = App Template
 
 This project contains a series of VertX based templates for a app server, with the given base features:
@@ -17,3 +19,7 @@ Besides the basic template, with support for only RESTfull services; there are a
 *   Vaadin based template, with support for nosql databases;
 *   RESTfull services, with support for nosql databases.
 *   Vue.JS based template, with support for nosql databases.
+
+
+## License
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fchordflower%2Ftemplate.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Fchordflower%2Ftemplate?ref=badge_large)
